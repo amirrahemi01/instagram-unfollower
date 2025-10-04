@@ -117,6 +117,8 @@
 
         .btn-danger:hover {
             background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
         }
 
         .btn:disabled {
@@ -202,32 +204,16 @@
             justify-content: center;
             color: white;
             font-weight: bold;
+            font-size: 14px;
             margin-right: 10px;
-        }
-
-        .user-avatar-img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-            border: 2px solid #667eea;
+            flex-shrink: 0;
         }
 
         .user-name {
             flex: 1;
-            font-size: 13px;
+            font-size: 14px;
             color: #333;
-        }
-
-        .user-link {
-            font-size: 11px;
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .user-link:hover {
-            text-decoration: underline;
+            font-weight: 500;
         }
 
         .warning {
@@ -238,6 +224,35 @@
             margin-top: 15px;
             font-size: 12px;
             color: #92400e;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .footer p {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer .copyright {
+            font-size: 10px;
+            color: #999;
+            margin-top: 3px;
         }
 
         .spinner {
@@ -303,6 +318,10 @@
                 <span>🔍</span> Find Unfollowers
             </button>
 
+            <button class="btn btn-danger" id="clearDataBtn" style="margin-top: 5px;">
+                <span>🗑️</span> Clear All Data
+            </button>
+
             <div class="progress" id="progress">
                 <div class="progress-bar">
                     <div class="progress-bar-fill" id="progressBar"></div>
@@ -321,6 +340,15 @@
             <div class="warning">
                 <strong>⚠️ Note:</strong> Use responsibly. Make sure you're on Instagram and navigate to your profile
                 before scanning.
+            </div>
+
+            <div class="footer">
+                <p>
+                    Made with 💜 by <a href="https://github.com/YOUR_GITHUB_USERNAME" target="_blank">@YOUR_USERNAME</a>
+                </p>
+                <p class="copyright">
+                    © 2025 Instagram Unfollower Manager | MIT License
+                </p>
             </div>
         </div>
     </div>

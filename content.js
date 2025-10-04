@@ -65,16 +65,48 @@ class InstagramManager {
     }
   }
 
-  // Extract user data including avatar
+  // IMPROVED: Extract user data including avatar with multiple methods
   extractUserData(element) {
     try {
       const username = this.extractUsername(element);
       if (!username) return null;
 
       let avatarUrl = null;
+      
+      // Method 1: Direct img tag
       const img = element.querySelector('img');
       if (img) {
-        avatarUrl = img.getAttribute('src');
+        avatarUrl = img.getAttribute('src') || img.getAttribute('data-src');
+      }
+      
+      // Method 2: Look for img in nearby link
+      if (!avatarUrl) {
+        const profileLink = element.querySelector(`a[href="/${username}/"]`);
+        if (profileLink) {
+          const linkImg = profileLink.querySelector('img');
+          if (linkImg) {
+            avatarUrl = linkImg.getAttribute('src') || linkImg.getAttribute('data-src');
+          }
+        }
+      }
+      
+      // Method 3: Find any img with username in alt
+      if (!avatarUrl) {
+        const imgs = element.querySelectorAll('img');
+        for (const image of imgs) {
+          const alt = image.getAttribute('alt') || '';
+          const src = image.getAttribute('src') || image.getAttribute('data-src');
+          if (alt.toLowerCase().includes(username.toLowerCase()) || 
+              alt.includes('profile picture')) {
+            avatarUrl = src;
+            break;
+          }
+        }
+      }
+      
+      // Validate avatar URL (must be valid Instagram CDN)
+      if (avatarUrl && !avatarUrl.startsWith('http')) {
+        avatarUrl = null;
       }
 
       return { username, avatarUrl };

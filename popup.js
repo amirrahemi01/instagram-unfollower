@@ -17,6 +17,7 @@ class PopupManager {
       scrapeFollowingBtn: document.getElementById('scrapeFollowingBtn'),
       findUnfollowersBtn: document.getElementById('findUnfollowersBtn'),
       stopBtn: document.getElementById('stopBtn'),
+      clearDataBtn: document.getElementById('clearDataBtn'),
       progress: document.getElementById('progress'),
       progressBar: document.getElementById('progressBar'),
       progressText: document.getElementById('progressText'),
@@ -30,6 +31,7 @@ class PopupManager {
     this.els.scrapeFollowingBtn.addEventListener('click', () => this.scrapeFollowing());
     this.els.findUnfollowersBtn.addEventListener('click', () => this.findUnfollowers());
     this.els.stopBtn.addEventListener('click', () => this.stopScanning());
+    this.els.clearDataBtn.addEventListener('click', () => this.clearAllData());
 
     // Load saved data
     this.loadSavedData();
@@ -93,6 +95,7 @@ class PopupManager {
     this.els.scrapeFollowersBtn.disabled = disabled;
     this.els.scrapeFollowingBtn.disabled = disabled;
     this.els.findUnfollowersBtn.disabled = disabled || (this.followersCount === 0 || this.followingCount === 0);
+    this.els.clearDataBtn.disabled = disabled;
   }
 
   async scrapeFollowers() {
@@ -172,6 +175,50 @@ class PopupManager {
     this.hideProgress();
   }
 
+  async clearAllData() {
+    const confirmed = confirm(
+      '⚠️ Clear All Data?\n\n' +
+      'This will delete:\n' +
+      '• All followers data\n' +
+      '• All following data\n' +
+      '• Unfollowers list\n' +
+      '• All saved information\n\n' +
+      'You will need to scan again from scratch.\n\n' +
+      'Are you sure you want to continue?'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      // Clear Chrome storage
+      await chrome.storage.local.clear();
+      
+      // Reset instance variables
+      this.followersCount = 0;
+      this.followingCount = 0;
+      this.unfollowers = [];
+      
+      // Reset UI elements
+      this.els.followersCount.textContent = '0';
+      this.els.followingCount.textContent = '0';
+      this.els.results.classList.remove('active');
+      this.els.resultsList.innerHTML = '';
+      
+      // Re-enable buttons
+      this.disableButtons(false);
+      
+      // Show success message
+      alert('✅ All data cleared successfully!\n\nExtension reset to initial state.');
+      console.log('✅ All data cleared from Chrome local storage');
+      
+    } catch (error) {
+      console.error('❌ Error clearing data:', error);
+      alert('❌ Error clearing data. Please try again or reload the extension.');
+    }
+  }
+
   displayResults(users) {
     this.els.results.classList.add('active');
     this.els.resultsTitle.textContent = `Unfollowers (${users.length})`;
@@ -181,16 +228,11 @@ class PopupManager {
       return;
     }
 
-    this.els.resultsList.innerHTML = users.map(user => {
-      const avatarHtml = user.avatarUrl 
-        ? `<img src="${user.avatarUrl}" class="user-avatar-img" alt="${user.username}">`
-        : `<div class="user-avatar">${user.username.charAt(0).toUpperCase()}</div>`;
-      
+    this.els.resultsList.innerHTML = users.map((user) => {
       return `
         <div class="user-item">
-          ${avatarHtml}
+          <div class="user-avatar">${user.username.charAt(0).toUpperCase()}</div>
           <div class="user-name">@${user.username}</div>
-          <a href="https://www.instagram.com/${user.username}/" target="_blank" class="user-link">View</a>
         </div>
       `;
     }).join('');
